@@ -10,7 +10,7 @@ static class RouteRegistrationExtensions
     {
         var apiGroup = app.MapGroup("api");
 
-        apiGroup.MapGet("suppliers/list", async ([AsParameters] SupplierListQuery query, IMediator mediator) => await mediator.Send(query))
+        apiGroup.MapGet("suppliers/list", async ([AsParameters] SuppliersListQuery query, IMediator mediator) => await mediator.Send(query))
                     .WithName("GetSuppliersList")
                     .WithOpenApi();
 

@@ -13,16 +13,16 @@ public class CustomerListQueryResponse
     public string Email { get; set; } = "";
     public string Phone { get; set; } = "";
     public string Iban { get; set; } = "";
-    public CustomersListQueryResponseCustomerCategory? CustomerCategory { get; set; }
+    public CustomerListQueryResponseCustomerCategory? CustomerCategory { get; set; }
 }
 
-public class CustomersListQueryResponseCustomerCategory
+public class CustomerListQueryResponseCustomerCategory
 {
     public string Code { get; set; } = "";
     public string Description { get; set; } = "";
 }
 
-internal class CustomerListQueryHandler(BackendContext context) : IRequestHandler<CustomersListQuery, List<CustomerListQueryResponse>>
+internal class CustomersListQueryHandler(BackendContext context) : IRequestHandler<CustomersListQuery, List<CustomerListQueryResponse>>
 {
     private readonly BackendContext context = context;
 
@@ -52,7 +52,7 @@ internal class CustomerListQueryHandler(BackendContext context) : IRequestHandle
 
             var customerCategory = item.CustomerCategory;
             if (customerCategory is not null)
-                resultItem.CustomerCategory = new CustomersListQueryResponseCustomerCategory
+                resultItem.CustomerCategory = new CustomerListQueryResponseCustomerCategory
                 {
                     Code = customerCategory.Code,
                     Description = customerCategory.Description

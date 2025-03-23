@@ -1,9 +1,6 @@
-using MediatR;
-
 namespace Backend.Features.Suppliers;
 
-
-public class SupplierListQuery : IRequest<List<SupplierListQueryResponse>>
+public class SuppliersListQuery : IRequest<List<SupplierListQueryResponse>>
 {
     public string? Name { get; set; }
 }
@@ -17,11 +14,11 @@ public class SupplierListQueryResponse
     public string Phone { get; set; } = "";
 }
 
-internal class SupplierListQueryHandler(BackendContext context) : IRequestHandler<SupplierListQuery, List<SupplierListQueryResponse>>
+internal class SuppliersListQueryHandler(BackendContext context) : IRequestHandler<SuppliersListQuery, List<SupplierListQueryResponse>>
 {
     private readonly BackendContext context = context;
 
-    public async Task<List<SupplierListQueryResponse>> Handle(SupplierListQuery request, CancellationToken cancellationToken)
+    public async Task<List<SupplierListQueryResponse>> Handle(SuppliersListQuery request, CancellationToken cancellationToken)
     {
         var query = context.Suppliers.AsQueryable();
         if (!string.IsNullOrEmpty(request.Name))
@@ -40,7 +37,7 @@ internal class SupplierListQueryHandler(BackendContext context) : IRequestHandle
                 Email = item.Email,
                 Phone = item.Phone,
             };
-            
+
             result.Add(resultItem);
         }
 
