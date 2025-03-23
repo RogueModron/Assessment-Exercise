@@ -14,6 +14,8 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import { FocusEvent, useEffect, useRef, useState } from "react";
+import { js2xml } from "xml-js";
+import TextDialog from "../components/TextDialog";
 
 interface CustomerListQuery {
   id: number;
@@ -54,6 +56,25 @@ export default function CustomerListPage() {
     searchTextRef.current = e.target?.value;
   }
 
+  const [openTextDialog, setOpenTextDialog] = useState(false);
+  const [exportXmlResult, setExportXmlResult] = useState("");
+
+  function handleCloseTextDialog() {
+    setOpenTextDialog(false);
+  }
+
+  function onExportXmlClick() {
+    const data = {
+      customers: {
+        customer: list
+      }
+    };
+    const options = { compact: true, spaces: 4 };
+    const result = js2xml(data, options);
+    setExportXmlResult(result);
+    setOpenTextDialog(true);
+  }
+
   return (
     <>
       <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
@@ -62,10 +83,10 @@ export default function CustomerListPage() {
 
       <Box sx={{ p: "2px 4px", display: "flex", alignItems: "center", mb: 2 }}>
         <TextField label="Search text" type="search"
-          sx={{ mr: 1 }}
           defaultValue=""
           onBlur={onSearchTextBlur} />
-        <Button variant="outlined" onClick={onSearchClick}>Search</Button>
+        <Button variant="outlined" onClick={onSearchClick} sx={{ ml: 1 }}>Search</Button>
+        <Button variant="outlined" onClick={onExportXmlClick} sx={{ ml: 1 }}>Export XML</Button>
       </Box>
 
       <TableContainer component={Paper}>
@@ -97,6 +118,11 @@ export default function CustomerListPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TextDialog
+        onClose={handleCloseTextDialog}
+        open={openTextDialog}
+        text={exportXmlResult} />
     </>
   );
 }
