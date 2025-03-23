@@ -13,7 +13,8 @@ import {
   styled,
   tableCellClasses,
 } from "@mui/material";
-import { FocusEvent, useEffect, useRef, useState } from "react";
+import { FocusEvent, useCallback, useEffect, useRef, useState } from "react";
+import throttle from "lodash.throttle";
 import { js2xml } from "xml-js";
 import TextDialog from "../components/TextDialog";
 
@@ -33,7 +34,12 @@ interface CustomerListQuery {
 export default function CustomerListPage() {
   const [list, setList] = useState<CustomerListQuery[]>([]);
 
+  let dataLoading = false;
+
   function loadData(searchText?: string) {
+    if (dataLoading) return;
+    dataLoading = true;
+
     const queryParameters = searchText ? `?searchText=${searchText}` : "";
     fetch(`/api/customers/list${queryParameters}`)
       .then((response) => {
@@ -41,6 +47,9 @@ export default function CustomerListPage() {
       })
       .then((data) => {
         setList(data as CustomerListQuery[]);
+      })
+      .finally(() => {
+        dataLoading = false;
       });
   };
 
@@ -48,13 +57,15 @@ export default function CustomerListPage() {
 
   const searchTextRef = useRef<string>("");
 
-  function onSearchClick() {
-    loadData(searchTextRef.current);
-  }
-
   function onSearchTextBlur(e: FocusEvent<HTMLInputElement>) {
     searchTextRef.current = e.target?.value;
   }
+
+  function loadDataWithSearchText() {
+    loadData(searchTextRef.current)
+  }
+
+  const handleSearchClick = useCallback(throttle(loadDataWithSearchText, 1000), []);
 
   const [openTextDialog, setOpenTextDialog] = useState(false);
   const [exportXmlResult, setExportXmlResult] = useState("");
@@ -85,7 +96,7 @@ export default function CustomerListPage() {
         <TextField label="Search text" type="search"
           defaultValue=""
           onBlur={onSearchTextBlur} />
-        <Button variant="outlined" onClick={onSearchClick} sx={{ ml: 1 }}>Search</Button>
+        <Button variant="outlined" onClick={handleSearchClick} sx={{ ml: 1 }}>Search</Button>
         <Button variant="outlined" onClick={onExportXmlClick} sx={{ ml: 1 }}>Export XML</Button>
       </Box>
 
