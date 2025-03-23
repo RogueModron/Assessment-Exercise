@@ -30,7 +30,7 @@ internal class EmployeesListQueryHandler(BackendContext context) : IRequestHandl
 
     public async Task<List<EmployeeListQueryResponse>> Handle(EmployeesListQuery request, CancellationToken cancellationToken)
     {
-        var query = context.Employees.AsQueryable();
+        var query = context.Employees.Include(q => q.Department).AsQueryable();
         if (!string.IsNullOrEmpty(request.FirstName))
             query = query.Where(q => q.FirstName.ToLower().Contains(request.FirstName.ToLower()));
         if (!string.IsNullOrEmpty(request.LastName))
@@ -52,14 +52,13 @@ internal class EmployeesListQueryHandler(BackendContext context) : IRequestHandl
                 Phone = item.Phone,
             };
 
-            var department = await context.Departments.SingleOrDefaultAsync(q => q.Id == item.DepartmentId, cancellationToken);
+            var department = item.Department;
             if (department is not null)
                 resultItem.Department = new EmployeeListQueryResponseDepartment
                 {
                     Code = department.Code,
                     Description = department.Description
                 };
-
 
             result.Add(resultItem);
         }
