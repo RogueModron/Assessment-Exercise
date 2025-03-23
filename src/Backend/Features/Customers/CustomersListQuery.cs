@@ -35,7 +35,7 @@ internal class CustomersListQueryHandler(BackendContext context) : IRequestHandl
             query = query.Where(q => q.Name.ToLower().Contains(searchText) || q.Email.ToLower().Contains(searchText));
         }
 
-        var data = await query.OrderBy(q => q.Name).ToListAsync(cancellationToken);
+        var data = await query.OrderBy(q => q.Name).AsNoTracking().ToListAsync(cancellationToken);
         var result = new List<CustomerListQueryResponse>();
 
         foreach (var item in data)

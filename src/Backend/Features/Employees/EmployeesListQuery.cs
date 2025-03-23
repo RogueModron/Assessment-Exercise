@@ -36,7 +36,7 @@ internal class EmployeesListQueryHandler(BackendContext context) : IRequestHandl
         if (!string.IsNullOrEmpty(request.LastName))
             query = query.Where(q => q.LastName.ToLower().Contains(request.LastName.ToLower()));
 
-        var data = await query.OrderBy(q => q.LastName).ThenBy(q => q.FirstName).ToListAsync(cancellationToken);
+        var data = await query.OrderBy(q => q.LastName).ThenBy(q => q.FirstName).AsNoTracking().ToListAsync(cancellationToken);
         var result = new List<EmployeeListQueryResponse>();
 
         foreach (var item in data)

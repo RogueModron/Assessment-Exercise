@@ -24,7 +24,7 @@ internal class SuppliersListQueryHandler(BackendContext context) : IRequestHandl
         if (!string.IsNullOrEmpty(request.Name))
             query = query.Where(q => q.Name.ToLower().Contains(request.Name.ToLower()));
 
-        var data = await query.OrderBy(q => q.Name).ToListAsync(cancellationToken);
+        var data = await query.OrderBy(q => q.Name).AsNoTracking().ToListAsync(cancellationToken);
         var result = new List<SupplierListQueryResponse>();
 
         foreach (var item in data)
